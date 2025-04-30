@@ -1,51 +1,18 @@
 "use client"
 
-import { useEffect, useRef } from "react"
 import { Button } from "@/components/ui/button"
 import { Play } from "lucide-react"
 import { motion } from "framer-motion"
+import { ThreeBackground } from "./three-background"
+import { ThreeCubeScene } from "./three-cube-scene"
 
 export function HeroSection() {
-  const containerRef = useRef<HTMLDivElement>(null)
-
-  useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
-      if (!containerRef.current) return
-
-      const { clientX, clientY } = e
-      const { left, top, width, height } = containerRef.current.getBoundingClientRect()
-
-      const x = (clientX - left) / width - 0.5
-      const y = (clientY - top) / height - 0.5
-
-      const cubes = containerRef.current.querySelectorAll(".cube")
-      cubes.forEach((cube, i) => {
-        const factor = (i + 1) * 10
-        const cubeElement = cube as HTMLElement
-        cubeElement.style.transform = `
-          translate3d(${x * factor}px, ${y * factor}px, 0)
-          rotate3d(${y}, ${-x}, 0, ${Math.sqrt(x * x + y * y) * 10}deg)
-        `
-      })
-    }
-
-    document.addEventListener("mousemove", handleMouseMove)
-    return () => document.removeEventListener("mousemove", handleMouseMove)
-  }, [])
-
   return (
-    <div
-      ref={containerRef}
-      className="relative overflow-hidden bg-gradient-to-br from-blue-950 via-blue-900 to-teal-800"
-    >
-      <div className="absolute inset-0 bg-grid-white/[0.05] bg-[center_top_-1px]" />
-      <div className="absolute inset-0">
-        {/* 3D Cube elements with animation */}
-        <div className="cube absolute top-1/4 left-1/4 w-64 h-64 bg-blue-500/10 transform rotate-45 skew-y-12 transition-transform duration-700" />
-        <div className="cube absolute top-1/3 right-1/4 w-80 h-80 bg-teal-500/10 transform -rotate-12 skew-x-12 transition-transform duration-700" />
-        <div className="cube absolute bottom-1/4 left-1/3 w-72 h-72 bg-indigo-500/10 transform rotate-12 skew-y-6 transition-transform duration-700" />
-      </div>
-      <div className="container relative z-10 mx-auto px-4 py-32 md:py-40 lg:py-56">
+    <div className="relative overflow-hidden bg-gradient-to-br from-blue-950 via-blue-900 to-teal-800 min-h-[80vh] flex items-center">
+      {/* Three.js background */}
+      <ThreeBackground />
+
+      <div className="container relative z-10 mx-auto px-4 py-32 md:py-40">
         <div className="mx-auto max-w-4xl text-center">
           <motion.h1
             className="font-display text-4xl font-bold tracking-tight text-white sm:text-7xl"
@@ -97,6 +64,11 @@ export function HeroSection() {
             </Button>
           </motion.div>
         </div>
+      </div>
+
+      {/* Interactive 3D cube */}
+      <div className="absolute bottom-10 right-10 w-40 h-40 md:w-64 md:h-64 hidden md:block">
+        <ThreeCubeScene />
       </div>
     </div>
   )
